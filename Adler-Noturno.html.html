@@ -1,0 +1,181 @@
+<!DOCTYPE html> <!--tipo de documento-->
+<html lang="pt-BR"> <!-- linguagem -->
+<head> <!--cabeça do site-->
+    <meta charset="UTF-8"> <!-- tipo de acentuação -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- escala padrão -->
+    <title>Avaliação Final</title> <!-- título -->
+    <style> /* começo do estilo */
+        body { 
+            font-family: 'Arial', sans-serif; /* Familia de fontes */
+            background: linear-gradient(to bottom, #333, #111); /* plano de fundo com gradiente linear */
+            color: #fff;  /* cor da fonte */
+            margin: 0;  /* distância de margem */
+            padding: 0;  /* espaçamento interno */
+            display: flex;  /* define o display como flexível */
+            justify-content: center;  /* justifica o conteúdo no center */
+            align-items: center;  /* alinha o conteúdo ao centro */
+            height: 100vh;  /* define a altura como 100 por cento da viewport */
+            flex-direction: column;  /* define a direção do display flex como coluna */
+        }
+        h1 {
+            background-color: #222;  /* cor do fundo */
+            border-radius: 10px;  /* arredondamento da borda */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);  /* cria uma sombra */
+            padding: 20px;  /* espaçamento interno */
+            color: #4CAF50;  /* cor da fonte */
+            text-align: center;  /* alinhamento do texto */
+            font-size: 2.5rem;  /* tamanho da fonte */
+            border: 2px solid #4CAF50;  /* define a borda e cor da borda */
+        }
+
+        button {
+            background-color: #4CAF50;  /* cor do plano de fundo */
+            color: white;  /* cor da fonte  */
+            padding: 10px 20px;  /* espaçamento interno */
+            border: none;  /* define a borda como none (sem borda) */
+            border-radius: 5px;  /* arredonda a borda */
+            cursor: pointer;  /* define o cursor como pointer (mãozinha) */
+            transition: background 0.3s ease;  /* transiçao de hover */
+        }
+
+        button:hover {  /* ao passar o mouse troca a cor do fundo */
+            background-color: #45a049;
+        }
+
+        input[type="text"] {  /* campo para inserir informação */
+            padding: 10px;  /* espaçamento interno */
+            border-radius: 5px;  /* arredondar bordas */
+            border: 1px solid #4CAF50;  /* define a borda como sólida e cor */
+            outline: none;  /* linha externa none (sem linha externa) */
+            width: 100%;  /* largura */
+            box-sizing: border-box;  /* define a propriedade da largura e altura */
+        }
+
+        input[type="text"]:focus { /* troca o cursor do mouse */
+            border-color: #45a049;  /* cor da borda */
+            box-shadow: 0 0 5px #45a049;  /* define sombra */
+        }
+
+        table {  /* tabela */
+            margin-top: 20px;  /* margem no topo */
+            border-collapse: collapse;  /* estilo de modelo de borda */
+            width: 100%;  /* largura */
+        }
+
+        th, td {  /* tabela */
+            border: 1px solid #4CAF50;  /* define a borda como sólida e a cor */
+            padding: 10px;  /* espaçamento */
+            text-align: center;  /* alinhamento de texto ao centro */
+        }
+
+        th {  /* tabela */
+            background-color: #4CAF50;  /* cor do plano de fundo */
+            color: white;  /* cor da fonte */
+        }
+
+        #drag-container {
+            display: flex;  /* define o display como flexível */
+            margin-top: 20px;  /* margem do topo */
+        }
+        
+        .task {
+            padding: 10px;  /* espaçamento interno */
+            background-color: #4CAF50;  /* cor do plano de fundo */
+            margin-right: 10px;  /* margem direita */
+            border-radius: 5px;  /* arredondar borda */
+            cursor: grab;  /* define o cursor como grab (pegar e soltar) */
+            color: white;  /* cor da fonte */
+            text-align: center;  /* alinhamento do texto ao centro */
+            transition: transform 0.3s ease;  /* transição do hover */
+        }
+
+        .task:hover {  /* ao passar o mouse aumenta a escala */
+            transform: scale(1.1); 
+        }
+
+        #drop-area {
+            width: 200px;  /* largura */
+            height: 150px;  /* altura */
+            border: 2px dashed #4CAF50;  /* define a borda */
+            border-radius: 10px;  /* arredonda a borda */
+            display: flex;  /* define o display como flexível */
+            justify-content: center;  /* justifica o conteúdo ao centro */
+            align-items: center;  /* alinha os itens ao centro */
+            color: #4CAF50;  /* cor da fonte */
+        }
+
+        #drop-area.drag-over {
+            background-color: rgba(76, 175, 80, 0.1);  /* cor do plano de fundo */
+        }
+    </style>  <!-- fim do estilo --> 
+</head> <!-- cabeça do site --> 
+<body> <!-- corpo --> 
+
+    <h1>Avaliação Final</h1> <!-- texto de tamanho semântico 1 --> 
+
+    <input type="text" id="userInput" placeholder="Digite algo..."> <!-- área para o usuário inserir informações --> 
+    <button onclick="showAlert()">Enviar</button> <!-- botão com alert ao clicar --> 
+
+
+    <table id="itemTable" style="display:none;"> <!-- tabela --> 
+        <thead>
+            <tr>
+                <th>Item</th> <!-- item da tabela --> 
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <button onclick="showItems()">Mostrar Itens</button> <!-- botão ao clicar mostra os itens --> 
+
+
+    <div id="drag-container"> <!-- div com os itens para serem arrastados --> 
+        <div id="task1" class="task" draggable="true" ondragstart="dragStart(event)">Tarefa 1</div>
+        <div id="task2" class="task" draggable="true" ondragstart="dragStart(event)">Tarefa 2</div>
+        <div id="task3" class="task" draggable="true" ondragstart="dragStart(event)">Tarefa 3</div>
+    </div>
+    <div id="drop-area" ondragover="allowDrop(event)" ondrop="dropTask(event)">Arraste aqui</div>
+
+    <script> /* começo do Javascript */
+        function showAlert() { /* define uma função */
+            const userInput = document.getElementById('userInput').value; /* pega um elemento no html pelo seu id*/
+            if (userInput) { /*define uma condição*/
+                alert('Você digitou: ' + userInput); /*mostra um alerta*/
+            } else { /*define uma condição*/
+                alert('Por favor, digite algo.'); /*mostra um alerta novamente*/
+            }
+        }
+        const items = ['Item 1', 'Item 2', 'Item 3', 'Item 4']; /*coloca todos os itens dentro de constantes */
+        function showItems() { /* define uma função*/
+            const table = document.getElementById('itemTable'); /* pega um elemento no html pelo seu id*/
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; /* substitui um item na tabela por '' (nada) */
+            items.forEach(item => { /*pega cada item, um por um*/
+                const row = document.createElement('tr'); /* cria uma linha na tabela*/
+                const cell = document.createElement('td'); /*cria uma célula na tabela*/
+                cell.textContent = item;
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+            });
+            table.style.display = 'table'; /* define o estilo do display da tabela */
+        }
+
+        function allowDrop(event) { 
+            event.preventDefault();
+            const dropArea = document.getElementById('drop-area'); /* pega um elemento pelo seu id*/
+            dropArea.classList.add('drag-over'); /*adiciona uma classe ao item no html*/
+        }
+        function dragStart(event) {
+            event.dataTransfer.setData('text', event.target.id); 
+        }
+        function dropTask(event) {
+            event.preventDefault();
+            const taskId = event.dataTransfer.getData('text');
+            const task = document.getElementById(taskId);
+            const dropArea = document.getElementById('drop-area'); /*pega um elemento pelo seu id no html*/
+            dropArea.appendChild(task);
+            dropArea.classList.remove('drag-over'); /* remove uma classe */
+        }
+    </script> <!--fim do script-->
+</body> <!--fim do corpo-->
+</html> <!--fim do html-->
